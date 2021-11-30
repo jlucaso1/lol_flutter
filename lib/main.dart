@@ -51,18 +51,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   init() async {
-    await lcu.start();
-    await checkLoLRunning();
     Timer.periodic(const Duration(seconds: 2), (timer) async {
       await checkLoLRunning();
     });
   }
 
   checkLoLRunning() async {
-    var result = await lcu.authentication.CheckLolRunning();
-    if (_isOpen != result) {
+    try {
+      await lcu.start();
       setState(() {
-        _isOpen = result;
+        _isOpen = true;
+      });
+    } catch (e) {
+      setState(() {
+        _isOpen = false;
       });
     }
   }
