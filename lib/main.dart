@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void subscribeAutoAccept() async {
-    lcu.events.on('/lol-matchmaking/v1/search', (message) {
+    lcu.events.on('/lol-matchmaking/v1/search', (message) async {
       EventResponse evResponse = message;
       if (evResponse.eventType == 'Update') {
         String searchState = evResponse.data['searchState'];
@@ -91,6 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
             playerResponse != "Accepted" &&
             !invalidState.contains(state)) {
           debugPrint('Accepting');
+          acceptMatch();
         }
       }
     });
@@ -98,6 +99,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void unsubscribeAutoAccept() async {
     lcu.events.removeAllListeners('/lol-matchmaking/v1/search');
+  }
+
+  void acceptMatch() async {
+    await lcu.request(
+        HttpMethod.POST, '/lol-matchmaking/v1/ready-check/accept');
   }
 
   @override
